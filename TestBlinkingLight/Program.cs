@@ -21,6 +21,7 @@ namespace TestBlinkingLight
                 string nextLightCondition = _lightOn ? "On":  "Off";
                 Console.WriteLine($"Turn light {nextLightCondition} Press Enter");
                 Console.ReadLine();
+                Console.Clear();
                 if (_lightOn)
                 {
                     controller.Write(pin, PinValue.High);

@@ -14,23 +14,23 @@ namespace TestBlinkingLight
             using GpioController controller = new();
             controller.OpenPin(pin, PinMode.Output);
             Console.WriteLine($"GPIO pin enabled: {pin}");
-            Console.ReadLine();
-            // while (true)
-            // {
-            //     string nextLightCondition = _lightOn ? "On":  "Off";
-            //     Console.WriteLine($"Turn light {nextLightCondition} Press Enter");
-            //     Console.ReadLine();
-            //     _lightOn = !_lightOn;
-            //     if (_lightOn)
-            //     {
-            //         controller.Write(pin, PinValue.High);
-            //     }
-            //     else
-            //     {
-            //         controller.Write(pin, PinValue.Low);
-            //     }
-            //     
-            // }
+
+            while (true)
+            {
+                string nextLightCondition = _lightOn ? "On":  "Off";
+                Console.WriteLine($"Turn light {nextLightCondition} Press Enter");
+                Console.ReadLine();
+                _lightOn = !_lightOn;
+                if (_lightOn)
+                {
+                    controller.Write(pin, PinValue.High);
+                }
+                else
+                {
+                    controller.Write(pin, PinValue.Low);
+                }
+                
+            }
         }
     }
 }

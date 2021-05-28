@@ -17,10 +17,10 @@ namespace TestBlinkingLight
 
             while (true)
             {
+                _lightOn = !_lightOn;
                 string nextLightCondition = _lightOn ? "On":  "Off";
                 Console.WriteLine($"Turn light {nextLightCondition} Press Enter");
                 Console.ReadLine();
-                _lightOn = !_lightOn;
                 if (_lightOn)
                 {
                     controller.Write(pin, PinValue.High);

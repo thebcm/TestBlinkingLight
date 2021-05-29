@@ -14,6 +14,7 @@ namespace TestBlinkingLight
         public static GpioController Controller;
         static void Main(string[] args)
         {
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
             Controller = new GpioController();
             Dictionary<int, bool> pinsOnOff = new Dictionary<int, bool>();
             Dictionary<int, int> inlineToGpioMap = new Dictionary<int, int>();
@@ -78,9 +79,20 @@ namespace TestBlinkingLight
                 {
                     if (!Controller.IsPinOpen(light))
                         Controller.OpenPin(light, PinMode.Output);
+                    Controller.Write(light, PinValue.High);
                 }
             }
             
+        }
+
+        private static void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+        {
+            foreach (var light in lights)
+            {
+                if (!Controller.IsPinOpen(light))
+                    Controller.OpenPin(light, PinMode.Output);
+                Controller.Write(light, PinValue.High);
+            }
         }
 
         public static void buttonPress()

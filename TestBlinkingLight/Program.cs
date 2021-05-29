@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Device.Gpio;
+using System.Linq;
 using System.Threading;
 
 namespace TestBlinkingLight
@@ -27,21 +28,40 @@ namespace TestBlinkingLight
             inlineToGpioMap.Add(10,13);
             while (true)
             {
-                Console.WriteLine("What pin to turn on/off");
-                int mappedPin = Convert.ToInt32(Console.ReadLine());
-                int pin = inlineToGpioMap[mappedPin];
-                if (pinsOnOff.ContainsKey(pin))
+                Console.WriteLine("How many millisecond between lights?");
+                int mill = Convert.ToInt32(Console.ReadLine());
+                var lights = inlineToGpioMap.OrderBy(s => s.Value).Select(s => s.Value).ToArray();
+                foreach (var light in lights)
                 {
-                    bool isOn = pinsOnOff[pin];
-                    controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
-                    pinsOnOff[pin] = !isOn;
+                    if(!controller.IsPinOpen(light))
+                        controller.OpenPin(light);
+                    controller.Write(light, PinValue.Low);
                 }
-                else
+                
+                foreach (var light in lights)
                 {
-                    pinsOnOff.Add(pin, true);
-                    controller.OpenPin(pin, PinMode.Output);
-                    controller.Write(pin, PinValue.High);
+                    if(!controller.IsPinOpen(light))
+                        controller.OpenPin(light);
+                    var currentPinValue = controller.Read(light);
+                    controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
+                    Thread.Sleep(mill);
                 }
+
+                // Console.WriteLine("What pin to turn on/off");
+                // int mappedPin = Convert.ToInt32(Console.ReadLine());
+                // int pin = inlineToGpioMap[mappedPin];
+                // if (pinsOnOff.ContainsKey(pin))
+                // {
+                //     bool isOn = pinsOnOff[pin];
+                //     controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
+                //     pinsOnOff[pin] = !isOn;
+                // }
+                // else
+                // {
+                //     pinsOnOff.Add(pin, true);
+                //     controller.OpenPin(pin, PinMode.Output);
+                //     controller.Write(pin, PinValue.High);
+                // }
             }
         }
 
@@ -58,7 +78,6 @@ namespace TestBlinkingLight
             controller.Write(ledPin, PinValue.Low);
             while (true)
             {
-                
                 if (controller.Read(buttonPin) == PinValue.Low)
                 {
                     controller.Write(ledPin, PinValue.High);

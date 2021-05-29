@@ -27,7 +27,7 @@ namespace TestBlinkingLight
                 else
                 {
                     pinsOnOff.Add(pin, true);
-                    controller.OpenPin(pin, PinMode.Input);
+                    controller.OpenPin(pin, PinMode.Output);
                     controller.Write(pin, PinValue.High);
                 }
             }

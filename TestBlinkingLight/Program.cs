@@ -7,22 +7,44 @@ namespace TestBlinkingLight
     
     class Program
     {
-        static int pin = 18;
-        private static bool _lightOn = false;
+        
         static void Main(string[] args)
         {
+            int ledPin = 18;
+            int buttonPin = 17;
+            using GpioController controller = new GpioController();
+            controller.OpenPin(ledPin, PinMode.Output);
+            controller.OpenPin(buttonPin, PinMode.Output);
+            while (true)
+            {
+                if (controller.Read(buttonPin) == PinValue.Low)
+                {
+                    controller.Write(ledPin, PinValue.High);
+                }
+                else
+                {
+                    controller.Write(ledPin, PinValue.Low);
+                }
+            }
+            
+        }
+
+        public static void  LightConsoleOnOff()
+        {
+            int pin = 18;
+            bool lightOn = false;
             using GpioController controller = new();
             controller.OpenPin(pin, PinMode.Output);
             Console.WriteLine($"GPIO pin enabled: {pin}");
 
             while (true)
             {
-                _lightOn = !_lightOn;
-                string nextLightCondition = _lightOn ? "On":  "Off";
+                lightOn = !lightOn;
+                string nextLightCondition = lightOn ? "On":  "Off";
                 Console.WriteLine($"Turn light {nextLightCondition} Press Enter");
                 Console.ReadLine();
                 Console.Clear();
-                if (_lightOn)
+                if (lightOn)
                 {
                     controller.Write(pin, PinValue.High);
                 }

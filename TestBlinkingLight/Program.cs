@@ -74,7 +74,6 @@ namespace TestBlinkingLight
                 {
                     if (!controller.IsPinOpen(light))
                         controller.OpenPin(light, PinMode.Output);
-                    controller.Write(light, PinValue.High);
                 }
             }
             

@@ -14,9 +14,12 @@ namespace TestBlinkingLight
             int buttonPin = 17;
             using GpioController controller = new GpioController();
             controller.OpenPin(ledPin, PinMode.Output);
+            Console.WriteLine("led open");
             controller.OpenPin(buttonPin, PinMode.Output);
+            Console.WriteLine("button open");
             while (true)
             {
+                Console.WriteLine(controller.Read(buttonPin));
                 if (controller.Read(buttonPin) == PinValue.Low)
                 {
                     controller.Write(ledPin, PinValue.High);
@@ -25,6 +28,8 @@ namespace TestBlinkingLight
                 {
                     controller.Write(ledPin, PinValue.Low);
                 }
+                Console.WriteLine("Press Enter to cycle");
+                Console.ReadLine();
             }
             
         }

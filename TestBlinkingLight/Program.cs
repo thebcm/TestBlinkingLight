@@ -14,7 +14,6 @@ namespace TestBlinkingLight
         public static GpioController Controller;
         static void Main(string[] args)
         {
-            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
             Controller = new GpioController();
             Dictionary<int, bool> pinsOnOff = new Dictionary<int, bool>();
             Dictionary<int, int> inlineToGpioMap = new Dictionary<int, int>();
@@ -34,7 +33,11 @@ namespace TestBlinkingLight
                 while (true)
                 {
                     Console.WriteLine("How many millisecond between lights?");
-                    int mill = Convert.ToInt32(Console.ReadLine());
+                    string consoleResponse = Console.ReadLine();
+                    if (consoleResponse == "e" || consoleResponse == "exit")
+                        break;
+
+                    int mill = Convert.ToInt32(consoleResponse);
                     
                     foreach (var light in lights)
                     {
@@ -78,15 +81,6 @@ namespace TestBlinkingLight
                 }
             }
             
-        }
-
-        private static void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
-        {
-            foreach (var light in lights)
-            {
-                if (!Controller.IsPinOpen(light))
-                    Controller.OpenPin(light, PinMode.Output);
-            }
         }
 
         public static void buttonPress()

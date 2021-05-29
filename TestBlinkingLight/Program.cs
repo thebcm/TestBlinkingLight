@@ -25,8 +25,15 @@ namespace TestBlinkingLight
                 {
                     isOn = !isOn;
                 }
-                
-                controller.Write(ledPin, isOn ? PinValue.High : PinValue.Low);
+
+                if (isOn)
+                {
+                    controller.Write(ledPin, PinValue.High);
+                }
+                else
+                {
+                    controller.Write(ledPin, PinValue.Low);
+                }
             }
             
         }

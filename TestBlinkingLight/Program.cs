@@ -30,12 +30,12 @@ namespace TestBlinkingLight
             {
                 Console.WriteLine("How many millisecond between lights?");
                 int mill = Convert.ToInt32(Console.ReadLine());
-                var lights = inlineToGpioMap.OrderBy(s => s.Value).Select(s => s.Value).ToArray();
+                var lights = inlineToGpioMap.OrderBy(s => s.Key).Select(s => s.Value).ToArray();
                 foreach (var light in lights)
                 {
                     if(!controller.IsPinOpen(light))
                         controller.OpenPin(light, PinMode.Output);
-                    controller.Write(light, PinValue.Low);
+                    controller.Write(light, PinValue.High);
                 }
                 
                 foreach (var light in lights)

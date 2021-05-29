@@ -21,7 +21,7 @@ namespace TestBlinkingLight
             controller.Write(ledPin, PinValue.Low);
             while (true)
             {
-                
+                Console.Write(controller.Read(buttonPin));
                 if (controller.Read(buttonPin) == PinValue.Low)
                 {
                     isOn = !isOn;

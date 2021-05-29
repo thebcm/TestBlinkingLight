@@ -17,9 +17,10 @@ namespace TestBlinkingLight
             Console.WriteLine("led open");
             controller.OpenPin(buttonPin, PinMode.InputPullUp);
             Console.WriteLine("button open");
+            bool isOn = false;
             while (true)
             {
-                bool isOn = false;
+                
                 if (controller.Read(buttonPin) == PinValue.Low)
                 {
                     isOn = !isOn;

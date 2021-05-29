@@ -10,11 +10,12 @@ namespace TestBlinkingLight
     
     class Program
     {
-        
+        public static int[] lights;
+        public static GpioController Controller;
         static void Main(string[] args)
         {
-            
-            using GpioController controller = new GpioController();
+            Console.CancelKeyPress += ConsoleOnCancelKeyPress;
+            Controller = new GpioController();
             Dictionary<int, bool> pinsOnOff = new Dictionary<int, bool>();
             Dictionary<int, int> inlineToGpioMap = new Dictionary<int, int>();
             inlineToGpioMap.Add(1,21);
@@ -27,7 +28,7 @@ namespace TestBlinkingLight
             inlineToGpioMap.Add(8,26);
             inlineToGpioMap.Add(9,19);
             inlineToGpioMap.Add(10,13);
-            var lights = inlineToGpioMap.OrderBy(s => s.Key).Select(s => s.Value).ToArray();
+            lights = inlineToGpioMap.OrderBy(s => s.Key).Select(s => s.Value).ToArray();
             try
             {
                 while (true)
@@ -37,17 +38,17 @@ namespace TestBlinkingLight
                     
                     foreach (var light in lights)
                     {
-                        if (!controller.IsPinOpen(light))
-                            controller.OpenPin(light, PinMode.Output);
-                        controller.Write(light, PinValue.High);
+                        if (!Controller.IsPinOpen(light))
+                            Controller.OpenPin(light, PinMode.Output);
+                        Controller.Write(light, PinValue.High);
                     }
 
                     foreach (var light in lights)
                     {
-                        if (!controller.IsPinOpen(light))
-                            controller.OpenPin(light);
-                        var currentPinValue = controller.Read(light);
-                        controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
+                        if (!Controller.IsPinOpen(light))
+                            Controller.OpenPin(light);
+                        var currentPinValue = Controller.Read(light);
+                        Controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
                         Thread.Sleep(mill);
                     }
 
@@ -72,11 +73,20 @@ namespace TestBlinkingLight
             {
                 foreach (var light in lights)
                 {
-                    if (!controller.IsPinOpen(light))
-                        controller.OpenPin(light, PinMode.Output);
+                    if (!Controller.IsPinOpen(light))
+                        Controller.OpenPin(light, PinMode.Output);
                 }
             }
             
+        }
+
+        private static void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)
+        {
+            foreach (var light in lights)
+            {
+                if (!Controller.IsPinOpen(light))
+                    Controller.OpenPin(light, PinMode.Output);
+            }
         }
 
         public static void buttonPress()

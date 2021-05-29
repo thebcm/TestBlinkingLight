@@ -15,19 +15,14 @@ namespace TestBlinkingLight
             using GpioController controller = new GpioController();
             controller.OpenPin(ledPin, PinMode.Output);
             Console.WriteLine("led open");
-            controller.OpenPin(buttonPin, PinMode.InputPullDown);
+            controller.OpenPin(buttonPin, PinMode.Input);
             Console.WriteLine("button open");
-            bool isOn = false;
+
             controller.Write(ledPin, PinValue.Low);
             while (true)
             {
-                Console.WriteLine(controller.Read(buttonPin));
+                
                 if (controller.Read(buttonPin) == PinValue.Low)
-                {
-                    isOn = !isOn;
-                }
-
-                if (isOn)
                 {
                     controller.Write(ledPin, PinValue.High);
                 }

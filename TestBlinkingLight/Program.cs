@@ -14,10 +14,22 @@ namespace TestBlinkingLight
             
             using GpioController controller = new GpioController();
             Dictionary<int, bool> pinsOnOff = new Dictionary<int, bool>();
+            Dictionary<int, int> inlineToGpioMap = new Dictionary<int, int>();
+            inlineToGpioMap.Add(1,21);
+            inlineToGpioMap.Add(2,20);
+            inlineToGpioMap.Add(3,16);
+            inlineToGpioMap.Add(4,12);
+            inlineToGpioMap.Add(5,25);
+            inlineToGpioMap.Add(6,24);
+            inlineToGpioMap.Add(7,18);
+            inlineToGpioMap.Add(8,26);
+            inlineToGpioMap.Add(9,19);
+            inlineToGpioMap.Add(10,13);
             while (true)
             {
                 Console.WriteLine("What pin to turn on/off");
-                int pin = Convert.ToInt32(Console.ReadLine());
+                int mappedPin = Convert.ToInt32(Console.ReadLine());
+                int pin = inlineToGpioMap[mappedPin];
                 if (pinsOnOff.ContainsKey(pin))
                 {
                     bool isOn = pinsOnOff[pin];

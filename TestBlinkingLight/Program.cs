@@ -34,7 +34,7 @@ namespace TestBlinkingLight
                 foreach (var light in lights)
                 {
                     if(!controller.IsPinOpen(light))
-                        controller.OpenPin(light);
+                        controller.OpenPin(light, PinMode.Output);
                     controller.Write(light, PinValue.Low);
                 }
                 

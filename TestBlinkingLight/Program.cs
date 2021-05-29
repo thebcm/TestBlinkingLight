@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Threading;
 
@@ -9,6 +10,30 @@ namespace TestBlinkingLight
     {
         
         static void Main(string[] args)
+        {
+            
+            using GpioController controller = new GpioController();
+            Dictionary<int, bool> pinsOnOff = new Dictionary<int, bool>();
+            while (true)
+            {
+                Console.WriteLine("What pin to turn on/off");
+                int pin = Convert.ToInt32(Console.ReadLine());
+                if (pinsOnOff.ContainsKey(pin))
+                {
+                    bool isOn = pinsOnOff[pin];
+                    controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
+                    pinsOnOff[pin] = !isOn;
+                }
+                else
+                {
+                    pinsOnOff.Add(pin, true);
+                    controller.OpenPin(pin);
+                    controller.Write(pin, PinValue.High);
+                }
+            }
+        }
+
+        public static void buttonPress()
         {
             int ledPin = 18;
             int buttonPin = 17;
@@ -31,7 +56,6 @@ namespace TestBlinkingLight
                     controller.Write(ledPin, PinValue.Low);
                 }
             }
-            
         }
 
         public static void  LightConsoleOnOff()

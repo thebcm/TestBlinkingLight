@@ -19,14 +19,13 @@ namespace TestBlinkingLight
             Console.WriteLine("button open");
             while (true)
             {
+                bool isOn = false;
                 if (controller.Read(buttonPin) == PinValue.Low)
                 {
-                    controller.Write(ledPin, PinValue.High);
+                    isOn = !isOn;
                 }
-                else
-                {
-                    controller.Write(ledPin, PinValue.Low);
-                }
+                
+                controller.Write(ledPin, isOn ? PinValue.High : PinValue.Low);
             }
             
         }

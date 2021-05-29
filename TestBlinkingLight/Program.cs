@@ -40,37 +40,16 @@ namespace TestBlinkingLight
 
                     int mill = Convert.ToInt32(consoleResponse);
                     
-                    foreach (var light in lights)
+                    Console.WriteLine("How many iterations?");
+                    int iterations = Convert.ToInt32(Console.ReadLine());
+                    int i = 0;
+                    while (i < iterations)
                     {
-                        if (!Controller.IsPinOpen(light))
-                            Controller.OpenPin(light, PinMode.Output);
-                        Controller.Write(light, PinValue.High);
+                        LightLoop(mill);
+                        i++;
                     }
-
-                    foreach (var light in lights)
-                    {
-                        if (!Controller.IsPinOpen(light))
-                            Controller.OpenPin(light);
-                        var currentPinValue = Controller.Read(light);
-                        Controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
-                        Thread.Sleep(mill);
-                    }
-
-                    // Console.WriteLine("What pin to turn on/off");
-                    // int mappedPin = Convert.ToInt32(Console.ReadLine());
-                    // int pin = inlineToGpioMap[mappedPin];
-                    // if (pinsOnOff.ContainsKey(pin))
-                    // {
-                    //     bool isOn = pinsOnOff[pin];
-                    //     controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
-                    //     pinsOnOff[pin] = !isOn;
-                    // }
-                    // else
-                    // {
-                    //     pinsOnOff.Add(pin, true);
-                    //     controller.OpenPin(pin, PinMode.Output);
-                    //     controller.Write(pin, PinValue.High);
-                    // }
+                    
+                    
                 }
             }
             finally
@@ -83,6 +62,25 @@ namespace TestBlinkingLight
                 }
             }
             
+        }
+
+        private static void LightLoop(int mill)
+        {
+            foreach (var light in lights)
+            {
+                if (!Controller.IsPinOpen(light))
+                    Controller.OpenPin(light, PinMode.Output);
+                Controller.Write(light, PinValue.High);
+            }
+
+            foreach (var light in lights)
+            {
+                if (!Controller.IsPinOpen(light))
+                    Controller.OpenPin(light);
+                var currentPinValue = Controller.Read(light);
+                Controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
+                Thread.Sleep(mill);
+            }
         }
 
         private static void ConsoleOnCancelKeyPress(object? sender, ConsoleCancelEventArgs e)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 
 namespace TestBlinkingLight
@@ -26,43 +27,57 @@ namespace TestBlinkingLight
             inlineToGpioMap.Add(8,26);
             inlineToGpioMap.Add(9,19);
             inlineToGpioMap.Add(10,13);
-            while (true)
+            var lights = inlineToGpioMap.OrderBy(s => s.Key).Select(s => s.Value).ToArray();
+            try
             {
-                Console.WriteLine("How many millisecond between lights?");
-                int mill = Convert.ToInt32(Console.ReadLine());
-                var lights = inlineToGpioMap.OrderBy(s => s.Key).Select(s => s.Value).ToArray();
+                while (true)
+                {
+                    Console.WriteLine("How many millisecond between lights?");
+                    int mill = Convert.ToInt32(Console.ReadLine());
+                    
+                    foreach (var light in lights)
+                    {
+                        if (!controller.IsPinOpen(light))
+                            controller.OpenPin(light, PinMode.Output);
+                        controller.Write(light, PinValue.High);
+                    }
+
+                    foreach (var light in lights)
+                    {
+                        if (!controller.IsPinOpen(light))
+                            controller.OpenPin(light);
+                        var currentPinValue = controller.Read(light);
+                        controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
+                        Thread.Sleep(mill);
+                    }
+
+                    // Console.WriteLine("What pin to turn on/off");
+                    // int mappedPin = Convert.ToInt32(Console.ReadLine());
+                    // int pin = inlineToGpioMap[mappedPin];
+                    // if (pinsOnOff.ContainsKey(pin))
+                    // {
+                    //     bool isOn = pinsOnOff[pin];
+                    //     controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
+                    //     pinsOnOff[pin] = !isOn;
+                    // }
+                    // else
+                    // {
+                    //     pinsOnOff.Add(pin, true);
+                    //     controller.OpenPin(pin, PinMode.Output);
+                    //     controller.Write(pin, PinValue.High);
+                    // }
+                }
+            }
+            finally
+            {
                 foreach (var light in lights)
                 {
-                    if(!controller.IsPinOpen(light))
+                    if (!controller.IsPinOpen(light))
                         controller.OpenPin(light, PinMode.Output);
                     controller.Write(light, PinValue.High);
                 }
-                
-                foreach (var light in lights)
-                {
-                    if(!controller.IsPinOpen(light))
-                        controller.OpenPin(light);
-                    var currentPinValue = controller.Read(light);
-                    controller.Write(light, currentPinValue == PinValue.High ? PinValue.Low : PinValue.High);
-                    Thread.Sleep(mill);
-                }
-
-                // Console.WriteLine("What pin to turn on/off");
-                // int mappedPin = Convert.ToInt32(Console.ReadLine());
-                // int pin = inlineToGpioMap[mappedPin];
-                // if (pinsOnOff.ContainsKey(pin))
-                // {
-                //     bool isOn = pinsOnOff[pin];
-                //     controller.Write(pin, !isOn == true ? PinValue.High : PinValue.Low);
-                //     pinsOnOff[pin] = !isOn;
-                // }
-                // else
-                // {
-                //     pinsOnOff.Add(pin, true);
-                //     controller.OpenPin(pin, PinMode.Output);
-                //     controller.Write(pin, PinValue.High);
-                // }
             }
+            
         }
 
         public static void buttonPress()
